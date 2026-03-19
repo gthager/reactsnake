@@ -3,14 +3,33 @@ import type {Point, Direction} from "../types/gameTypes";
 
 const GRID_SIZE = 20;
 
-const getRandomFood = (): Point => ({
-    x: Math.floor(Math.random() * GRID_SIZE),
-    y: Math.floor(Math.random() * GRID_SIZE),
-});
+const getRandomFood = (snake: Point[], gridSize: number): Point => {
+    let newFood: Point;
+    let isCollision = true;
+
+    while (isCollision)
+    {
+        newFood = {
+            x: Math.floor(Math.random() * gridSize),
+            y: Math.floor(Math.random() * gridSize),
+        }
+
+        isCollision = snake.some(
+            (segment) => segment.x === newFood.x && segment.y === newFood.y
+        );
+
+        if (!isCollision)
+        {
+            return newFood;
+        }
+    }
+
+    return { x: 0, y: 0 }; // Fallback, should never reach here
+}
 
 export const useGameEngine = () => {
     const [snake, setSnake] = useState<Point[]>([{ x: 10, y: 10 }]);
-    const [food, setFood] = useState<Point>(getRandomFood());
+    const [food, setFood] = useState<Point>(getRandomFood(snake, GRID_SIZE));
     const [direction, setDirection] = useState<Direction>("RIGHT");
     const [isGameOver, setIsGameOver] = useState(false);
     const [score, setScore] = useState(0);
@@ -67,7 +86,7 @@ export const useGameEngine = () => {
             const currentFood = foodRef.current;
 
             if (newHead.x === currentFood.x && newHead.y === currentFood.y) {
-                setFood(getRandomFood());
+                setFood(getRandomFood(snake, GRID_SIZE));
                 setScore((s) => s + 1);
             } else {
                 newSnake.pop();
@@ -85,7 +104,7 @@ export const useGameEngine = () => {
 
     const resetGame = () => {
         setSnake([{ x: 10, y: 10 }]);
-        setFood(getRandomFood());
+        setFood(getRandomFood(snake, GRID_SIZE));
         setDirection("RIGHT");
         setIsGameOver(false);
         setScore(0);

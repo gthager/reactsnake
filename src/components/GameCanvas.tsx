@@ -22,16 +22,23 @@ const GameCanvas = ({
         // Clear canvas
         ctx.clearRect(0, 0, gridSize * cellSize, gridSize * cellSize);
 
-        // Draw snake
-        ctx.fillStyle = "green";
-        snake.forEach((segment) => {
-            ctx.fillRect(
-                segment.x * cellSize,
-                segment.y * cellSize,
-                cellSize,
-                cellSize
-            );
-        });
+        const lightGreen = "#a3d16c";
+        const darkGreen = "#9bc964";
+
+        // Draw checkerboard background
+        for (let row = 0; row < gridSize; row++)
+        {
+            for (let col = 0; col < gridSize; col++)
+            {
+                ctx.fillStyle = (row + col) % 2 === 0 ? lightGreen : darkGreen;
+                ctx.fillRect(
+                    col * cellSize,
+                    row * cellSize,
+                    cellSize,
+                    cellSize
+                );
+            }
+        }
 
         // Draw food
         ctx.fillStyle = "red";
@@ -41,6 +48,17 @@ const GameCanvas = ({
             cellSize,
             cellSize
         );
+
+        // Draw snake
+        ctx.fillStyle = "#6495ED";
+        snake.forEach((segment) => {
+            ctx.fillRect(
+                segment.x * cellSize,
+                segment.y * cellSize,
+                cellSize,
+                cellSize
+            );
+        });
 
         // Game Over overlay
         if (isGameOver) {
